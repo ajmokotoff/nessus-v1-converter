@@ -19,6 +19,31 @@ var parseNessusResult = function(nessStr){
     var ip = splitNess[2];
     var code = parseFloat(splitNess[4]);
     var holeNote = splitNess[5];
+    //var info = splitNess[6].split(' :');
+
+    //var synopis2 = info2[1].split('Description :')[0];
+    //var description2 = info2[1].split('Description :')[1];
+    //var synopsis = info[1].substring(4, info[1].length - 15);
+    //var description = info[2].substring(4, info[2].length - 12);
+
+    var info = splitNess[6].split('Synopsis :');
+    var synopsis = info[1].split('Description :');
+    var description = synopsis[1].split('See also :');
+    try{
+      var see_also = description[1].split('See also :');
+      var solution = see_also[1].split('Risk factor :');
+    } catch(err) {
+      description = synopsis[1].split('Solution');
+      var solution = description[1].split('Risk factor :');
+    }
+
+    //console.log("synopsis: " + synopsis[0].substring(4, synopsis[0].length - 4));
+    //console.log("description: " + description[0].substring(4, description[0].length - 4));
+    //console.log("solution: " + solution[0].substring(6, solution[0].length - 4));
+
+    //var risk_factor = solution[1]
+
+
     if(scoreReg.test(nessStr)){
         var score = parseFloat(scoreReg.exec(nessStr)[1]);
     }
@@ -37,7 +62,10 @@ var parseNessusResult = function(nessStr){
         "vulntype":(holeNote === undefined ? "" : holeNote.indexOf('Note') !== -1 ? 'note' : 'hole'),
         "cvss": score,
         "value": 1,
-        "port":port};
+        "port":port,
+        "synopsis": synopsis[0].substring(4, synopsis[0].length - 4),
+        "description": description[0].substring(4, description[0].length - 4),
+        "solution": solution[0].substring(6, solution[0].length - 4)};
 }
 
 /**
@@ -72,9 +100,20 @@ function create_nessus(reports) {
     string_report += '<ReportItem';
     string_report += (report.port) ? ' port="' + report.port + '"':'';
     string_report += (report.vulnid) ? ' pluginID="' + report.vulnid + '"':'';
-    string_report += (report.value) ? ' severity="' + report.value + '"':'';
+    if (report.value) {
+      if(report.value == 'note') {
+        string_report += ' severity="0"';
+      } else if(report.value == 'hole') {
+        string_report += ' severity="2"';
+      } else {
+        string_report += ' severity="1"';
+      }
+    }
     string_report += '>';
     string_report += (report.cvss) ? '<cvss_base_score>' + report.cvss + '</cvss_base_score>':'';
+    string_report += (report.synopsis) ? '<synopsis>' + report.synopsis + '</synopsis>':'';
+    string_report += (report.description) ? '<description>' + report.description + '</description>':'';
+    string_report += (report.solution) ? '<solution>' + report.solution + '</solution>':'';
     string_report += '</ReportItem>';
   });
   string_report += '</ReportHost></Report></NessusClientData_v2>';
