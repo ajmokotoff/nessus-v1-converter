@@ -26,6 +26,7 @@ var parseNessusResult = function(nessStr){
     //var synopsis = info[1].substring(4, info[1].length - 15);
     //var description = info[2].substring(4, info[2].length - 12);
 
+    /*
     var info = splitNess[6].split('Synopsis :');
     var synopsis = info[1].split('Description :');
     var description = synopsis[1].split('See also :');
@@ -36,6 +37,19 @@ var parseNessusResult = function(nessStr){
       description = synopsis[1].split('Solution');
       var solution = description[1].split('Risk factor :');
     }
+    */
+    /*
+    var info = splitNess[6].split('Synopsis :');
+    var synopsis = info[1].split('Description :');
+    var description = synopsis[1].split('Solution :');
+    var solution = description[1].split('Risk factor :');
+    try{
+      var risk_factor = solution[1].split('Plugin output :');
+    } catch(err) {
+      var risk_factor = solution[1].split('CVSS Base Score :');
+    }
+    */
+
 
     //console.log("synopsis: " + synopsis[0].substring(4, synopsis[0].length - 4));
     //console.log("description: " + description[0].substring(4, description[0].length - 4));
@@ -63,9 +77,16 @@ var parseNessusResult = function(nessStr){
         "cvss": score,
         "value": 1,
         "port":port,
-        "synopsis": synopsis[0].substring(4, synopsis[0].length - 4),
-        "description": description[0].substring(4, description[0].length - 4),
-        "solution": solution[0].substring(6, solution[0].length - 4)};
+        //"synopsis": synopsis[0].substring(4, synopsis[0].length - 4),
+        "synopsis": "synopsis",
+        //"description": description[0].substring(4, description[0].length - 4),
+        "description": "description",
+        //"solution": solution[0].substring(4, solution[0].length - 4),
+        "solution": "solution",
+        "title": "blah",
+        //"risk_factor": risk_factor[0].substring(2, risk_factor[0].length - 4),
+        "risk_factor": "risk_factor",
+        "family": "nofamily"};
 }
 
 /**
@@ -114,6 +135,7 @@ function create_nessus(reports) {
     string_report += (report.synopsis) ? '<synopsis>' + report.synopsis + '</synopsis>':'';
     string_report += (report.description) ? '<description>' + report.description + '</description>':'';
     string_report += (report.solution) ? '<solution>' + report.solution + '</solution>':'';
+    string_report += (report.risk_factor) ? '<risk_factor>' + report.risk_factor + '</risk_factor>':'';
     string_report += '</ReportItem>';
   });
   string_report += '</ReportHost></Report></NessusClientData_v2>';
