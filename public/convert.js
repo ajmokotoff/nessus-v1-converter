@@ -14,6 +14,11 @@ var isResult = function(line){
 var parseNessusResult = function(nessStr){
     var scoreReg = /CVSS Base Score : (\d+\.\d+)/;
 
+    nessStr = nessStr.replace(/\=/g, "&#61;");
+    nessStr = nessStr.replace(/\>/g, "&gt;");
+    nessStr = nessStr.replace(/\</g, "&lt;");
+    nessStr = nessStr.replace(/\&/g, "&amp;");
+
     var portReg = /\D+ \((\d{1,7})\D+\)/;
     var splitNess = nessStr.split("|");
     var ip = splitNess[2];
@@ -80,10 +85,10 @@ var parseNessusResult = function(nessStr){
         //"synopsis": synopsis[0].substring(4, synopsis[0].length - 4),
         "synopsis": "synopsis",
         //"description": description[0].substring(4, description[0].length - 4),
-        "description": "description",
+        "description": info,
         //"solution": solution[0].substring(4, solution[0].length - 4),
         "solution": "solution",
-        "title": info,
+        "title": "title",
         //"risk_factor": risk_factor[0].substring(2, risk_factor[0].length - 4),
         "risk_factor": "risk_factor",
         "family": "nofamily"};
@@ -136,6 +141,7 @@ function create_nessus(reports) {
     string_report += (report.description) ? '<description>' + report.description + '</description>':'';
     string_report += (report.solution) ? '<solution>' + report.solution + '</solution>':'';
     string_report += (report.risk_factor) ? '<risk_factor>' + report.risk_factor + '</risk_factor>':'';
+    string_report += (report.title) ? '<title>' + report.title + '</title>':'';
     string_report += '</ReportItem>';
   });
   string_report += '</ReportHost></Report></NessusClientData_v2>';
