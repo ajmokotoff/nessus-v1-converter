@@ -19,7 +19,7 @@ var parseNessusResult = function(nessStr){
     var ip = splitNess[2];
     var code = parseFloat(splitNess[4]);
     var holeNote = splitNess[5];
-    //var info = splitNess[6].split(' :');
+    var info = splitNess[6];
 
     //var synopis2 = info2[1].split('Description :')[0];
     //var description2 = info2[1].split('Description :')[1];
@@ -83,7 +83,7 @@ var parseNessusResult = function(nessStr){
         "description": "description",
         //"solution": solution[0].substring(4, solution[0].length - 4),
         "solution": "solution",
-        "title": "blah",
+        "title": info,
         //"risk_factor": risk_factor[0].substring(2, risk_factor[0].length - 4),
         "risk_factor": "risk_factor",
         "family": "nofamily"};
