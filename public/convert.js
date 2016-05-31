@@ -24,26 +24,7 @@ var parseNessusResult = function(nessStr){
     var ip = splitNess[2];
     var code = parseFloat(splitNess[4]);
     var holeNote = splitNess[5];
-    var info = splitNess[6];
 
-    //var synopis2 = info2[1].split('Description :')[0];
-    //var description2 = info2[1].split('Description :')[1];
-    //var synopsis = info[1].substring(4, info[1].length - 15);
-    //var description = info[2].substring(4, info[2].length - 12);
-
-    /*
-    var info = splitNess[6].split('Synopsis :');
-    var synopsis = info[1].split('Description :');
-    var description = synopsis[1].split('See also :');
-    try{
-      var see_also = description[1].split('See also :');
-      var solution = see_also[1].split('Risk factor :');
-    } catch(err) {
-      description = synopsis[1].split('Solution');
-      var solution = description[1].split('Risk factor :');
-    }
-    */
-    /*
     var info = splitNess[6].split('Synopsis :');
     var synopsis = info[1].split('Description :');
     var description = synopsis[1].split('Solution :');
@@ -53,15 +34,6 @@ var parseNessusResult = function(nessStr){
     } catch(err) {
       var risk_factor = solution[1].split('CVSS Base Score :');
     }
-    */
-
-
-    //console.log("synopsis: " + synopsis[0].substring(4, synopsis[0].length - 4));
-    //console.log("description: " + description[0].substring(4, description[0].length - 4));
-    //console.log("solution: " + solution[0].substring(6, solution[0].length - 4));
-
-    //var risk_factor = solution[1]
-
 
     if(scoreReg.test(nessStr)){
         var score = parseFloat(scoreReg.exec(nessStr)[1]);
@@ -82,15 +54,11 @@ var parseNessusResult = function(nessStr){
         "cvss": score,
         "value": 1,
         "port":port,
-        //"synopsis": synopsis[0].substring(4, synopsis[0].length - 4),
-        "synopsis": "synopsis",
-        //"description": description[0].substring(4, description[0].length - 4),
-        "description": info,
-        //"solution": solution[0].substring(4, solution[0].length - 4),
-        "solution": "solution",
+        "synopsis": synopsis[0].substring(4, synopsis[0].length - 4),
+        "description": description[0].substring(4, description[0].length - 4),
+        "solution": solution[0].substring(4, solution[0].length - 4),
         "title": "title",
-        //"risk_factor": risk_factor[0].substring(2, risk_factor[0].length - 4),
-        "risk_factor": "risk_factor",
+        "risk_factor": risk_factor[0].substring(4, risk_factor[0].length - 4),
         "family": "nofamily"};
 }
 
