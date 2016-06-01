@@ -29,12 +29,13 @@ var parseNessusResult = function(nessStr){
     var synopsis = info[1].split('Description :');
     var description = synopsis[1].split('Solution :');
     var solution = description[1].split('Risk factor :');
-    try{
-      var risk_factor = solution[1].split('Plugin output :');
-    } catch(err) {
-      var risk_factor = solution[1].split('CVSS Base Score :');
+    var risk_factor = solution[1].split('CVSS Base Score :');
+    if(solution[1].split('CVSS Base Score :').length == 1) {
+      risk_factor = solution[1].split('Plugin output :');
+      risk_factor = risk_factor[0].substring(4, risk_factor[0].length).split('\\n')[0];
+    } else {
+      risk_factor = risk_factor[0].substring(4, risk_factor[0].length).split(' /')[0];
     }
-
     if(scoreReg.test(nessStr)){
         var score = parseFloat(scoreReg.exec(nessStr)[1]);
     }
@@ -58,7 +59,8 @@ var parseNessusResult = function(nessStr){
         "description": description[0].substring(4, description[0].length - 4),
         "solution": solution[0].substring(4, solution[0].length - 4),
         "title": "title",
-        "risk_factor": risk_factor[0].substring(4, risk_factor[0].length - 4),
+        "risk_factor": risk_factor,
+        "severity": holeNote.substring(9, holeNote.length).toLowerCase(),
         "family": "nofamily"};
 }
 
@@ -94,15 +96,17 @@ function create_nessus(reports) {
     string_report += '<ReportItem';
     string_report += (report.port) ? ' port="' + report.port + '"':'';
     string_report += (report.vulnid) ? ' pluginID="' + report.vulnid + '"':'';
-    if (report.value) {
-      if(report.value == 'note') {
+    /*
+    if (report.severity) {
+      if(report.severity == 'note') {
         string_report += ' severity="0"';
-      } else if(report.value == 'hole') {
+      } else if(report.severity == 'hole') {
         string_report += ' severity="2"';
       } else {
         string_report += ' severity="1"';
       }
     }
+    */
     string_report += '>';
     string_report += (report.cvss) ? '<cvss_base_score>' + report.cvss + '</cvss_base_score>':'';
     string_report += (report.synopsis) ? '<synopsis>' + report.synopsis + '</synopsis>':'';
